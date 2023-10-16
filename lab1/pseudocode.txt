@@ -1,0 +1,69 @@
+function get_random_solution(distances, start_node)
+    solution = create array of integers from 0 to number_of_nodes
+    shuffle(solution)  # Shuffle the elements of the solution array randomly
+    return solution[:get_solution_length(length of distances)] # return snipped solution so it fits requirements of problem
+	
+
+function get_nearest_neighbor_solution(distances, start_node)
+    distances = create a copy of distances as a float32 array
+    solution = create an array of integers of length required by problem
+    
+    if start_node is None
+        solution[0] = choose a random starting node
+    else
+        solution[0] = start_node
+    
+    set all values in the column of distances corresponding to solution[0] to infinity, so it is never chosen again
+
+    for i from 1 to length of solution - 1
+        solution[i] = find the closest node to the previous one
+        set all values in the column of distances corresponding to solution[i] to infinity
+
+    return solution
+
+
+
+function get_greedy_cycle_solution(distances, start_node)
+    distances = create a copy of distances as a float32 array
+    solution = create an array of integers with a length of 2 (first two nodes to pick)
+    in_solution = create an empty set (nodes that are already in solution)
+
+    if start_node is None
+        solution[0] = choose a random starting node
+    else
+        solution[0] = start_node
+    
+    add solution[0] to in_solution
+
+    solution[1] = find the closest node to the first one
+    add solution[1] to in_solution
+
+    num_nodes = 2
+    
+    for i from 2 to get_solution_length(length of distances) - 1 # loop for finding next node and place of insertion
+        min_increase = positive infinity
+        best_node = None
+        edge_start = None
+
+        for j from 0 to num_nodes - 2 # loop iterating over the edges from start to end of current solution
+            for k from 0 to length of distances # loop over all nodes and find the one that increases the cost the least
+                if k is not in in_solution
+                    dist_change = distances[solution[j], k] + distances[k, solution[j + 1]] - distances[solution[j], solution[j + 1]]
+                    if dist_change < min_increase
+                        min_increase = dist_change
+                        best_node = k
+                        edge_start = j
+
+        for k from 0 to length of distances # previous loop didn't iterate over the edge from last node in curr solution to first node in curr solution
+            if k is not in in_solution
+                dist_change = distances[solution[num_nodes - 1], k] + distances[k, solution[0]] - distances[solution[num_nodes - 1], solution[0]]
+                if dist_change < min_increase
+                    min_increase = dist_change
+                    best_node = k
+                    edge_start = num_nodes - 1
+        
+        insert best_node into solution at position edge_start + 1
+        add best_node to in_solution
+        increment num_nodes by 1
+
+    return solution
