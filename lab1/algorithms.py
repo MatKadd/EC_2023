@@ -6,7 +6,7 @@ from utils import get_solution_length
 def get_random_solution(distances, start_node=None):
     solution = np.arange(len(distances))
     np.random.shuffle(solution)
-    return solution[:get_solution_length(len(distances))]
+    return solution[: get_solution_length(len(distances))]
 
 
 def get_nearest_neighbor_solution(distances, start_node=None):
@@ -47,8 +47,11 @@ def get_greedy_cycle_solution(distances, start_node=None):
         for j in range(0, num_nodes - 1):
             for k in range(0, len(distances)):
                 if k not in in_solution:
-                    dist_change = distances[solution[j], k] + distances[k, solution[j + 1]] - distances[
-                        solution[j], solution[j + 1]]
+                    dist_change = (
+                        distances[solution[j], k]
+                        + distances[k, solution[j + 1]]
+                        - distances[solution[j], solution[j + 1]]
+                    )
                     if dist_change < min_increase:
                         min_increase = dist_change
                         best_node = k
@@ -56,8 +59,11 @@ def get_greedy_cycle_solution(distances, start_node=None):
 
         for k in range(0, len(distances)):
             if k not in in_solution:
-                dist_change = distances[solution[num_nodes - 1], k] + distances[k, solution[0]] - distances[
-                    solution[num_nodes - 1], solution[0]]
+                dist_change = (
+                    distances[solution[num_nodes - 1], k]
+                    + distances[k, solution[0]]
+                    - distances[solution[num_nodes - 1], solution[0]]
+                )
                 if dist_change < min_increase:
                     min_increase = dist_change
                     best_node = k
